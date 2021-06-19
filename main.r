@@ -1,28 +1,18 @@
-```{r, eval=FALSE, include=TRUE}
-"Protocolo:
- 
- 1. Daniel Felipe Villa Rengifo
- 
- 2. Lenguaje: R
- 
- 3. Tema: MÉTODOS DE REMUESTREO Y VALIDACIÓN DE MODELOS: VALIDACIÓN CRUZADA Y BOOTSTRAP [Parte 1]
- 
- 4. Fuentes:  
-    https://rpubs.com/rdelgado/405322
-    https://tereom.github.io/est-computacional-2018/bootstrap-en-r.html"
-```
+## ---- eval=FALSE, include=TRUE-------------------------------------------------------
+## "Protocolo:
+## 
+##  1. Daniel Felipe Villa Rengifo
+## 
+##  2. Lenguaje: R
+## 
+##  3. Tema: MÉTODOS DE REMUESTREO Y VALIDACIÓN DE MODELOS: VALIDACIÓN CRUZADA Y BOOTSTRAP [Parte 1]
+## 
+##  4. Fuentes:
+##     https://rpubs.com/rdelgado/405322
+##     https://tereom.github.io/est-computacional-2018/bootstrap-en-r.html"
 
 
-# Validación simple
-
-## Estimación del test error
-
-+ `Weekly` -> que contiene información sobre el rendimiento porcentual semanal del índice bursátil S&P 500 entre los años 1990 y 2010.
-
-Para llevar a cabo el método de validación simple, generamos dos grupos separando los datos de manera aleatoria en un set de entrenamiento y otro de validación (50% en cada grupo)
-
-
-```{r}
+## ------------------------------------------------------------------------------------
 # Guardamos todos los OUTPUTS:
 sink("OUTPUTS.txt")
 
@@ -53,12 +43,9 @@ datos.test <- Weekly[-indices.train, ]
 
 print("datos.test")
 print(datos.test)
-```
 
 
-Es importante verificar que la distribución de la variable respuesta `Direction` se distribuye aproximadamente de manera similar entre el set de entrenamiento y test
-
-```{r}
+## ------------------------------------------------------------------------------------
 # Cargamos la libreria por el operador "pipe" %>%
 library(dplyr)
 
@@ -82,12 +69,9 @@ print(summary(modelo.logistico))
 attach(Weekly)
 print("# Codificación de la variable respuesta para el modelo")
 print(contrasts(Direction))
-```
-
-Después de obtener el modelo, calculamos las predicciones que podemos obtener con el mismo a partir de la probabilidad a posteriori de `Direction` (estableciendo un _cutoff_ de probabilidad de 0,5 para la clasificación).
 
 
-```{r}
+## ------------------------------------------------------------------------------------
 # Cálculo de la probabilidad predicha por el modelo con los datos de test
 prob.modelo <- predict(object = modelo.logistico, newdata = datos.test, 
                        type = "response")
@@ -110,11 +94,9 @@ print(mean(pred.modelo != datos.test$Direction))
 
 # Resultado:
 "La estimación del test error rate del modelo mediante validación simple es del 46,78%, por lo que el modelo acierta con sus predicciones en solo un 1 – 0,4678 = 53,2% de los casos."
-```
 
-> Nota:  Sin embargo, la estimación del test error rate mediante validación simple es propenso a sufrir alta variabilidad (depende de cómo se hayan distribuido las observaciones en los grupos de entrenamiento y test).
 
-```{r}
+## ------------------------------------------------------------------------------------
 # Ahora se muestra el mismo proceso llevado a cabo anteriormente, repitiéndolo 100 veces (en cada iteración los datos se van a repartir de manera distinta en entrenamiento y test).
 
 
@@ -138,9 +120,9 @@ for (i in 1:100){
 
 print("Estadisticos del Vector donde se almacenarán los 100 test error estimados")
 print(summary(cv.error))
-```
 
-```{r}
+
+## ------------------------------------------------------------------------------------
 # Cargamos las librerias:
 library(ggplot2)
 library(gridExtra)
@@ -167,12 +149,9 @@ dev.off()
 
 # Resultado:
 "Como resultado de las 100 iteraciones, la estimación del test error oscila entre el 40,37% y el 48,99%, con una media del 44,43%, por lo que el porcentaje de acierto es del 55,57%."
-```
-
-Para que el modelo predictivo se considere útil, debe acertar con las predicciones en un porcentaje superior a lo esperado por azar o respecto al nivel basal (el que se obtiene si se asignaran a la clase mayoritaria), que en el caso de este set de datos corresponde a “Up”
 
 
-```{r}
+## ------------------------------------------------------------------------------------
 # Creamos una tabla de porcentajes (de 0 a 1), redondeada a 3 digitos
 print("# Creamos una tabla de porcentajes (de 0 a 1), redondeada a 3 digitos")
 print(prop.table(table(Weekly$Direction)) %>% round(digits = 3))
@@ -181,4 +160,3 @@ print(prop.table(table(Weekly$Direction)) %>% round(digits = 3))
 "Si siempre se predijera Direction = “Up”, el porcentaje de aciertos sería aproximadamente del 56%, por lo que este es el porcentaje mínimo que debería superar el modelo. En este caso, no se supera."
 
 sink()
-```

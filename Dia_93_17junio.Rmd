@@ -1,3 +1,14 @@
+---
+title: "Dia_93_17junio"
+author: "Daniel Felipe Villa Rengifo"
+date: "18/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 ```{r, eval=FALSE, include=TRUE}
 "Protocolo:
  
@@ -182,3 +193,11 @@ print(prop.table(table(Weekly$Direction)) %>% round(digits = 3))
 
 sink()
 ```
+
+
+```{r, eval=FALSE, include=FALSE}
+library(knitr)
+purl("Dia_93_17junio.Rmd", "main.r")
+```
+
+
